@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import api from "../services/api"; 
 
 function Home() {
   const [posts, setPosts] = useState([]);
@@ -18,10 +18,7 @@ function Home() {
   // Fetch posts
   const fetchPosts = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:5000/api/posts?page=${page}&limit=6&search=${search}`
-      );
-
+      const response = await api.get(`/posts?page=${page}&limit=6&search=${search}`);
       setPosts(response.data.posts);
       setTotalPages(response.data.totalPages);
       setLoading(false);
@@ -40,20 +37,9 @@ function Home() {
     if (!window.confirm("Are you sure you want to delete this post?")) return;
 
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        alert("You must be logged in to delete posts.");
-        return;
-      }
-
-      const response = await axios.delete(`http://localhost:5000/api/posts/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
+      const response = await api.delete(`/posts/${id}`);
       setPosts(posts.filter((post) => post._id !== id));
-      alert(response.data.message);
+      alert(response.data.message || "Post deleted successfully");
     } catch (err) {
       console.error(err.response?.data || err);
       alert(err.response?.data?.message || "Failed to delete post");
@@ -80,7 +66,6 @@ function Home() {
 
   return (
     <div className="p-8 bg-gray-50 min-h-screen">
-      
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-4xl font-bold text-gray-900">Blog Posts</h1>
@@ -131,8 +116,7 @@ function Home() {
         </p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-
-{filteredPosts.map((post) => (
+          {filteredPosts.map((post) => (
             <div
               key={post._id}
               className="bg-white rounded-xl shadow-md hover:shadow-xl transition p-5 border border-gray-100"
