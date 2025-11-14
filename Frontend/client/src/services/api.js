@@ -1,39 +1,29 @@
-// api.js - API service for making requests to the backend
 import axios from "axios";
 
-// Create axios instance with base URL
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
 });
 
-// Add request interceptor for authentication
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
-    if (token) {
-      // Correctly use template literal
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+    if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
   },
   (error) => Promise.reject(error)
 );
 
-// Handles expired token
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      localStorage.removeItem("userId");
+    if (error.response?.status === 401) {
+      localStorage.clear();
       window.location.href = "/login";
     }
     return Promise.reject(error);
   }
 );
 
-// Post API Services
 export const postService = {
   getAllPosts: async (page = 1, limit = 10, category = null) => {
     let url = `/posts?page=${page}&limit=${limit}`;
@@ -47,7 +37,6 @@ export const postService = {
     return response.data;
   },
 
-  // Create Post (supports image upload)
   createPost: async (formData) => {
     const response = await api.post("/posts", formData, {
       headers: { "Content-Type": "multipart/form-data" },
@@ -55,7 +44,6 @@ export const postService = {
     return response.data;
   },
 
-  // Update Post (supports replacing image)
   updatePost: async (id, formData) => {
     const response = await api.put(`/posts/${id}`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
@@ -63,32 +51,27 @@ export const postService = {
     return response.data;
   },
 
-  // Delete Post
   deletePost: async (id) => {
     const response = await api.delete(`/posts/${id}`);
     return response.data;
   },
 
-  // Add Comment
   addComment: async (postId, commentData) => {
-    const response = await api.post(`/posts/${postId}`/comments, commentData);
+    const response = await api.post(`/posts/${postId}/comments`, commentData);
     return response.data;
   },
 
-  // Search Posts
   searchPosts: async (query) => {
     const response = await api.get(`/posts/search?q=${query}`);
     return response.data;
   },
 
-  // Get Posts of Logged-in User
   getMyPosts: async () => {
     const response = await api.get("/posts/my-posts");
     return response.data;
   },
 };
 
-// Category API Services
 export const categoryService = {
   getAllCategories: async () => {
     const response = await api.get("/categories");
@@ -101,7 +84,6 @@ export const categoryService = {
   },
 };
 
-// Auth API Services
 export const authService = {
   register: async (userData) => {
     const response = await api.post("/auth/register", userData);
@@ -118,11 +100,7 @@ export const authService = {
     return response.data;
   },
 
-  logout: () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    localStorage.removeItem("userId");
-  },
+  logout: () => localStorage.clear(),
 
   getCurrentUser: () => {
     const user = localStorage.getItem("user");
