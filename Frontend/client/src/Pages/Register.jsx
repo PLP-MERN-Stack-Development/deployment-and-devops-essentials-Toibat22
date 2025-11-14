@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { authService } from "../services/api";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { UserContext } from "../context/UserContext";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -8,13 +10,26 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const { setUser } = useContext(UserContext); // <-- use context
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Register user
       const res = await authService.register({ name, email, password });
-      setMessage("Registration successful! Redirecting...");
-      setTimeout(() => navigate("/login"), 1200);
+
+      // Auto-login after registration
+      const loginRes = await authService.login({ email, password });
+
+      // Save token & user to localStorage
+      localStorage.setItem("token", loginRes.data.token);
+      localStorage.setItem("user", JSON.stringify(loginRes.data.user));
+
+      // Update context
+      setUser(loginRes.data.user);
+
+      setMessage("Registration successful! Redirecting to Home...");
+      setTimeout(() => navigate("/"), 1200);
     } catch (err) {
       console.log(err);
       const error = err?.response?.data?.message || "Registration failed";

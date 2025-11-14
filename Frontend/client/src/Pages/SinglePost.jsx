@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import api from "../services/api"; 
 
 const user = JSON.parse(localStorage.getItem("user"));
 const userId = user?.id || user?._id || localStorage.getItem("userId");
 const token = localStorage.getItem("token");
-
-console.log("userId:", userId, "token:", token);
 
 function SinglePost() {
   const { id } = useParams();
@@ -17,46 +16,30 @@ function SinglePost() {
   const [isLiked, setIsLiked] = useState(false);
 
   // Fetch post
-  const fetchPost = () => {
-    fetch(`http://localhost:5000/api/posts/${id}`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch post");
-        return res.json();
-      })
-      .then((data) => {
-        setPost(data);
-        setIsLiked(data.likes?.includes(userId));
-        console.log("RAW POST DATA =>", data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setError(err.message);
-        setLoading(false);
-      });
+  const fetchPost = async () => {
+    try {
+      const { data } = await api.get(`/posts/${id}`);
+      setPost(data);
+      setIsLiked(data.likes?.includes(userId));
+      setLoading(false);
+    } catch (err) {
+      console.error(err);
+      setError(err.message || "Failed to fetch post");
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     fetchPost();
   }, [id]);
 
-  //  ADD COMMENT
+  // ADD COMMENT
   const handleAddComment = async () => {
     if (!commentText.trim()) return alert("Comment cannot be empty");
     setAddingComment(true);
 
     try {
-      const res = await fetch(`http://localhost:5000/api/posts/${id}/comment`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ content: commentText }),
-      });
-
-      if (!res.ok) throw new Error("Failed to add comment");
-
+      await api.post(`/posts/${id}/comment`, { content: commentText });
       setCommentText("");
       fetchPost();
     } catch (error) {
@@ -67,7 +50,7 @@ function SinglePost() {
     }
   };
 
-  //  LIKE / UNLIKE POST
+  // LIKE / UNLIKE POST
   const handleLike = async () => {
     if (!userId) {
       alert("You must be logged in to like posts");
@@ -75,24 +58,14 @@ function SinglePost() {
     }
 
     try {
-      const res = await fetch(`http://localhost:5000/api/posts/${id}/like`, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        setIsLiked(!isLiked);
-        setPost((prev) => ({
-          ...prev,
-          likes: isLiked
-            ? prev.likes.filter((uid) => uid !== userId)
-            : [...prev.likes, userId],
-        }));
-      }
+      const { data } = await api.put(`/posts/${id}/like`);
+      setIsLiked(!isLiked);
+      setPost((prev) => ({
+        ...prev,
+        likes: isLiked
+          ? prev.likes.filter((uid) => uid !== userId)
+          : [...prev.likes, userId],
+      }));
     } catch (err) {
       console.error(err);
     }
@@ -105,11 +78,10 @@ function SinglePost() {
   return (
     <div className="p-8 bg-gray-50 min-h-screen">
       <div className="bg-white p-6 rounded shadow-lg max-w-3xl mx-auto">
-        
         <h1 className="text-3xl font-bold mb-4 flex items-center justify-between">
           {post.title}
 
-          {/*  LIKE BUTTON */}
+          {/* LIKE BUTTON */}
           <div className="mt-2 mb-4 flex items-center gap-2">
             <button
               onClick={handleLike}
@@ -117,13 +89,12 @@ function SinglePost() {
             >
               {isLiked ? "Unlike" : "Like"}
             </button>
-
             <span className="text-gray-600 text-sm">
               {post.likes?.length || 0} {post.likes?.length === 1 ? "Like" : "Likes"}
             </span>
           </div>
 
-          {/*  EDIT IF AUTHOR */}
+          {/* EDIT IF AUTHOR */}
           {post?.author && String(post.author?._id) === String(userId) && (
             <Link
               to={`/post/${post._id}/edit`}
@@ -134,8 +105,7 @@ function SinglePost() {
           )}
         </h1>
 
-
-{post.featuredImage && (
+        {post.featuredImage && (
           <img
             src={post.featuredImage}
             alt={post.title}
@@ -160,7 +130,7 @@ function SinglePost() {
           </p>
         )}
 
-        {/*  COMMENTS */}
+        {/* COMMENTS */}
         <div className="mt-8 border-t pt-4">
           <h2 className="text-lg font-semibold mb-3">Comments</h2>
 
@@ -177,10 +147,7 @@ function SinglePost() {
                     onClick={async () => {
                       if (!window.confirm("Delete this comment?")) return;
                       try {
-                        await fetch(`http://localhost:5000/api/posts/${post._id}/comment/${c._id}`, {
-                          method: "DELETE",
-                          headers: { Authorization: `Bearer ${token}` },
-                        });
+                        await api.delete(`/posts/${post._id}/comment/${c._id}`);
                         fetchPost();
                       } catch (err) {
                         console.error(err);
