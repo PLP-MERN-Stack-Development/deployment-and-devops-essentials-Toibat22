@@ -1,30 +1,34 @@
 import { useState, useContext } from "react";
 import { authService } from "../services/api";
 import { useNavigate, Link } from "react-router-dom";
-import { UserContext } from "../context/UserContext.jsx"; 
+import { UserContext } from "../context/UserContext.jsx";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
-  const { setUser } = useContext(UserContext); 
+  const { setUser } = useContext(UserContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const res = await authService.login({ email, password });
 
-      const { token, user } = res.data; 
+      // res is already response.data
+      const { token, user } = res;
+
+      // Save to localStorage
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
 
-      setUser(user); // update global user state
+      // Update context
+      setUser(user);
 
       setMessage("Login successful! Redirecting...");
-      navigate("/"); 
+      navigate("/");
     } catch (err) {
-      console.log(err);
+      console.error(err);
       const error = err?.response?.data?.message || "Login failed";
       setMessage(error);
     }
@@ -52,7 +56,6 @@ const Login = () => {
             required
             className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none shadow-sm sm:text-base transition-shadow"
           />
-
           <input
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -72,7 +75,10 @@ const Login = () => {
 
         <p className="mt-6 text-center text-gray-600 text-sm sm:text-base">
           Don't have an account?{" "}
-          <Link to="/register" className="text-blue-600 font-medium hover:underline">
+          <Link
+            to="/register"
+            className="text-blue-600 font-medium hover:underline"
+          >
             Register
           </Link>
         </p>

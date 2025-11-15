@@ -15,17 +15,19 @@ const Register = () => {
     e.preventDefault();
     try {
       // Register user
-      const res = await authService.register({ name, email, password });
+      await authService.register({ name, email, password });
 
       // Auto-login after registration
       const loginRes = await authService.login({ email, password });
 
+      const { token, user } = loginRes; // <-- destructure directly
+
       // Save token & user to localStorage
-      localStorage.setItem("token", loginRes.data.token);
-      localStorage.setItem("user", JSON.stringify(loginRes.data.user));
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
 
       // Update context
-      setUser(loginRes.data.user);
+      setUser(user);
 
       setMessage("Registration successful! Redirecting to Home...");
       setTimeout(() => navigate("/"), 1200);
