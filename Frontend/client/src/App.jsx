@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import { useContext } from "react";
-import { UserContext } from "./context/UserContext";
+import { UserContext } from "./context/UserContext.jsx";
 
 // Pages
 import Home from "./Pages/Home";
