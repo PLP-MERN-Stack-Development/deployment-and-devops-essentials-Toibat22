@@ -1,7 +1,6 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { authService } from "../services/api";
-import { useNavigate } from "react-router-dom";
-import { useContext } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { UserContext } from "../context/UserContext.jsx";
 
 const Register = () => {
@@ -10,7 +9,7 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
-  const { setUser } = useContext(UserContext); // <-- use context
+  const { setUser } = useContext(UserContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -87,12 +86,9 @@ const Register = () => {
 
         <p className="mt-6 text-center text-gray-600 text-sm sm:text-base">
           Already have an account?{" "}
-          <a
-            href="/login"
-            className="text-blue-600 font-medium hover:underline"
-          >
+          <Link to="/login" className="text-blue-600 font-medium hover:underline">
             Login
-          </a>
+          </Link>
         </p>
       </div>
     </div>
