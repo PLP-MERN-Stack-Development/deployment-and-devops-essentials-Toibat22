@@ -1,77 +1,182 @@
-# Deployment and DevOps for MERN Applications
+# 🌐 MERN Blog Application
 
-This assignment focuses on deploying a full MERN stack application to production, implementing CI/CD pipelines, and setting up monitoring for your application.
+A full-stack MERN Blog Platform with authentication, blog post creation, categories, comments, image uploads, and a responsive modern UI.
+Built as part of the PLP Full-Stack MERN & DevOps Module.
 
-## Assignment Overview
+### Live Deployment: https://mern-blog-frontend-8lx3.onrender.com
 
-You will:
-1. Prepare your MERN application for production deployment
-2. Deploy the backend to a cloud platform
-3. Deploy the frontend to a static hosting service
-4. Set up CI/CD pipelines with GitHub Actions
-5. Implement monitoring and maintenance strategies
+## 🚀 Features
+🔐 User Authentication
 
-## Getting Started
+Register, Login, Logout
 
-1. Accept the GitHub Classroom assignment invitation
-2. Clone your personal repository that was created by GitHub Classroom
-3. Follow the setup instructions in the `Week7-Assignment.md` file
-4. Use the provided templates and configuration files as a starting point
+JWT-based authentication
 
-## Files Included
+Protected API routes
 
-- `Week7-Assignment.md`: Detailed assignment instructions
-- `.github/workflows/`: GitHub Actions workflow templates
-- `deployment/`: Deployment configuration files and scripts
-- `.env.example`: Example environment variable templates
-- `monitoring/`: Monitoring configuration examples
+📝 Blog Posts
 
-## Requirements
+Create, edit, delete posts
 
-- A completed MERN stack application from previous weeks
-- Accounts on the following services:
-  - GitHub
-  - MongoDB Atlas
-  - Render, Railway, or Heroku (for backend)
-  - Vercel, Netlify, or GitHub Pages (for frontend)
-- Basic understanding of CI/CD concepts
+Upload images using Cloudinary
 
-## Deployment Platforms
+Fetch all posts & single post details
 
-### Backend Deployment Options
-- **Render**: Easy to use, free tier available
-- **Railway**: Developer-friendly, generous free tier
-- **Heroku**: Well-established, extensive documentation
+📂 Categories
 
-### Frontend Deployment Options
-- **Vercel**: Optimized for React apps, easy integration
-- **Netlify**: Great for static sites, good CI/CD
-- **GitHub Pages**: Free, integrated with GitHub
+Create categories
 
-## CI/CD Pipeline
+Assign category to posts
 
-The assignment includes templates for setting up GitHub Actions workflows:
-- `frontend-ci.yml`: Tests and builds the React application
-- `backend-ci.yml`: Tests the Express.js backend
-- `frontend-cd.yml`: Deploys the frontend to your chosen platform
-- `backend-cd.yml`: Deploys the backend to your chosen platform
+Filter posts by category
 
-## Submission
+💬 Comments
 
-Your work will be automatically submitted when you push to your GitHub Classroom repository. Make sure to:
+Add comments under a blog post
 
-1. Complete all deployment tasks
-2. Set up CI/CD pipelines with GitHub Actions
-3. Deploy both frontend and backend to production
-4. Document your deployment process in the README.md
-5. Include screenshots of your CI/CD pipeline in action
-6. Add URLs to your deployed applications
+💨 Responsive Frontend
 
-## Resources
+Styled with TailwindCSS
 
-- [GitHub Actions Documentation](https://docs.github.com/en/actions)
-- [MongoDB Atlas Documentation](https://docs.atlas.mongodb.com/)
-- [Render Documentation](https://render.com/docs)
-- [Railway Documentation](https://docs.railway.app/)
-- [Vercel Documentation](https://vercel.com/docs)
-- [Netlify Documentation](https://docs.netlify.com/) 
+Mobile-friendly layout
+
+## 🛠️ Tech Stack
+#### Frontend
+
+React (Vite)
+
+React Router
+
+Axios
+
+TailwindCSS
+
+#### Backend
+
+Node.js
+
+Express
+
+MongoDB + Mongoose
+
+Multer + Cloudinary for image uploads
+
+JWT Authentication
+
+Deployment
+
+Render (Frontend + Backend)
+
+GitHub
+
+Environment Variables
+
+## 📁 Project Structure
+
+deployment-and-devops-essentials-Toibat22/
+│
+├── .github/               /
+├── deployment/            /
+├── monitoring/            /
+├── .env.example
+├── README.md
+│
+├── Backend/
+│   ├── server.js
+│   ├── package.json
+│   │
+│   ├── uploads/
+│   │   ├── cloudinary.js
+│   │   └── multer.js
+│   │
+│   ├── controllers/
+│   │   ├── authController.js
+│   │   ├── categoryController.js
+│   │   ├── postController.js
+│   │   └── commentControllers.js
+│   │
+│   ├── middleware/
+│   │   ├── authMiddleware.js
+│   │   └── upload.js
+│   │
+│   ├── models/
+│   │   ├── User.js
+│   │   ├── Post.js
+│   │   └── Category.js
+│   │
+│   └── routes/
+│       ├── auth.js
+│       ├── category.js
+│       └── post.js
+│
+└── Frontend/
+    ├── index.html
+    ├── package.json
+    ├── postcss.config.js
+    ├── tailwind.config.js
+    ├── vite.config.js
+    ├── .env
+    ├── public/
+    │   ├── vite.svg
+    │   └── _redirects
+    │
+    └── src/
+        ├── App.jsx
+        ├── main.jsx
+        ├── App.css
+        ├── index.css
+        ├── Pages/
+        │   ├── Login.jsx
+        │   ├── Register.jsx
+        │   ├── Home.jsx
+        │   ├── CreatePost.jsx
+        │   ├── EditPost.jsx
+        │   ├── DeletePost.jsx
+        |   ├── SinglePost.jsx
+        │   └── PostDetails.jsx
+        │
+        ├── components/
+        │   ├── Navbar.jsx
+        │
+        ├── context/
+        │   └── UserContext.jsx|
+        │
+        └── services/
+            └── api.js
+
+## ⚙️ Environment Variables
+Backend .env
+MONGO_URI=your_mongo_url
+JWT_SECRET=your_secret
+CLOUDINARY_CLOUD_NAME=xxxx
+CLOUDINARY_API_KEY=xxxx
+CLOUDINARY_API_SECRET=xxxx
+
+Frontend .env
+VITE_API_URL=https://your-backend-url.onrender.com/api
+
+### 🧪 Running the Project Locally
+Backend
+cd Backend
+pnpm install
+pnpm start
+
+Frontend
+cd Frontend
+pnpm install
+pnpm run dev
+
+## 🌍 Deployment
+
+Both Frontend and Backend are deployed on Render.
+
+Frontend Live URL:
+👉 https://mern-blog-frontend-8lx3.onrender.com
+
+## 👩🏽‍💻 About Me
+
+Toibat Abdulhammed
+Aspiring Full-Stack Developer | PLP Scholar
+Passionate about design, software development, and continuous learning.
+
+“I'm learning. I'm not stuck. I'm becoming a developer.” 💙✨
